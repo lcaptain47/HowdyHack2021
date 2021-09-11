@@ -1,3 +1,3 @@
 I'm Pomu
 I'm big kusa
-pp
+I'm big pp Pomu kusa

@@ -2,6 +2,7 @@
 
 <html>
 <head>
+<title>VBoard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,35 +11,49 @@
 body {background-color: #d1d1e0; margin-bottom: 150;}
 div {margin-bottom: 100;}
 </style>
+
+<h1 class="text-center">VBoard</h1>
+
+<div class="row justify-content-center">
+    <img src="/assets/ImPomu.png" alt="Pomu" style="width: 25%">
+</div>
+
+
 <div class = "container-fluid">
 	<div class = "row justify-content-md-center">
 
         
 
-		<div class = "col col-lg-1" id = "redS" style="font-size:22pt">
-            <button onclick="setInstance('\\assets\\unforgivable.mp3')" class="btn btn-light">Unforgivable</button>
-            <button onclick="setInstance('\\assets\\Hi_Honey.mp3')" class="btn btn-light">Hi Honey</button>
-            <button onclick="setInstance('\\assets\\Eekum_Bokum_shortened.mp3')" class="btn btn-light">Eekum Bokum</button>
-            <button onclick="setInstance('\\assets\\onigiri.mp3')" class="btn btn-light">Onigiri</button>
-            <button onclick="setInstance('\\assets\\Ayame_Tis_I.mp3')" class="btn btn-light">Tis I</button>
+		<div class = "col col-lg-1 text-right" id = "redS" style="font-size:22pt">
+            <button onclick="setInstance('\\assets\\unforgivable.mp3', 'Unforgivable')" class="btn btn-light">Unforgivable</button>
+            <button onclick="setInstance('\\assets\\Hi_Honey.mp3', 'Hi Honey')" class="btn btn-light">Hi Honey</button>
+            <button onclick="setInstance('\\assets\\Eekum_Bokum_shortened.mp3', 'Eekum Bokum')" class="btn btn-light">Eekum Bokum</button>
+            <button onclick="setInstance('\\assets\\onigiri.mp3', 'Onigiri')" class="btn btn-light">Onigiri</button>
+            <button onclick="setInstance('\\assets\\Ayame_Tis_I.mp3', 'Tis I')" class="btn btn-light">Tis I</button>
             
         </div>
 
         
-        <div class = "col col-lg-2">
-            <p id="volume value">0.5</p>
+        <div class = "col col-lg-2 text-center">
+            <p>Volume: <span id="volume value">0.5</span></p>
             <input type="range" min="0" max="1" value="0.5" step="0.1" id="volume">
 
-            <p id="speed value">1</p>
+            <p>Speed: <span id ="speed value">1</span></p>
             <input type="range" min="0.5" max="4" value="1" step="0.5" id="speed">
+
+            <p>Selected Sound: </p>
+            <p id = "selectedSound">Unforgivable</p>
+
+            <p>Queue: </p>
+            <p id = "queueShow">Empty</p> 
         </div>
 
-        <div class = "col col-lg-1" style="font-size:22pt">
+        <div class = "col col-lg-1 text-center" style="font-size:22pt">
             <button onclick="playSoundKEKW(instance)" class="btn btn-light">Play Sample</button>   
             <button onclick="addToQueue(instance)" class="btn btn-light">Add to Queue</button>
             <button onclick="playQueue()" class="btn btn-light">Play Queue</button>
             <button onclick="clearQueue()" class="btn btn-light">Clear Queue</button>
-            
+            <button onclick="stopQueue()" class="btn btn-light">Stop Queue</button>
             
         </div>
 
@@ -58,10 +73,14 @@ div {margin-bottom: 100;}
 
 
     class Clip {
-        constructor(file, speed, volume){
+        constructor(name, file, speed, volume){
+            this.name = name;
             this.file = file;
             this.speed = 1.0;
             this.volume = .5;
+        }
+        changeName(newName) {
+            this.name = newName;
         }
         changeVolume(newVolume) {
             this.volume = newVolume;
@@ -72,8 +91,9 @@ div {margin-bottom: 100;}
     }
 
     var instance;
-    setInstance('\\assets\\unforgivable.mp3');
+    setInstance('\\assets\\unforgivable.mp3', 'Unforgivable');
     var queue = [];
+    var shownQueue = '';
 
 //    class SoundBites{
 //         constructor(){
@@ -111,8 +131,13 @@ div {margin-bottom: 100;}
     }
 
     //Set instance
-    function setInstance(file) {
-        instance = new Clip(file, 1.0, .5);
+    function setInstance(file, name) {
+        document.getElementById("speed").value = 1.0
+        document.getElementById("volume").value = 0.5
+        document.getElementById("speed value").innerHTML = 1.0
+        document.getElementById("volume value").innerHTML = 0.5
+        document.getElementById("selectedSound").innerHTML = name
+        instance = new Clip(name, file, 1.0, .5);
     }
 
     function playSoundKEKW(thisInstance){
@@ -122,12 +147,14 @@ div {margin-bottom: 100;}
     }
 
     function addToQueue(thatInstance){
+        shownQueue += thatInstance.name + ' | ';
+        document.getElementById("queueShow").innerHTML = shownQueue;
         queue.push(thatInstance);
     }
 
     function playing(i, files, volumes, rates) {
-        let sound = new Howl({src: [files[i]], volume: [volumes[i]], rate: [rates[i]], onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
-        sound.play();
+        newSound = new Howl({src: [files[i]], volume: [volumes[i]], rate: [rates[i]], onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
+        newSound.play();
     }
 
     function playQueue(){
@@ -144,12 +171,19 @@ div {margin-bottom: 100;}
             console.log("speed " + rates[i])
         }
         i = 0;
-        let sound = new Howl({src: [files[i]], html5: true, volume: [volumes[i]], rate: [2]/*[rates[i]]*/, onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
-        sound.play();
+        var newSound = new Howl({src: [files[i]], html5: true, volume: [volumes[i]], rate: [rates[i]], onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
+        newSound.play();
     }
 
     function clearQueue(){
         queue = [];
+        shownQueue = 'Empty'
+        document.getElementById("queueShow").innerHTML = shownQueue;
+        shownQueue = ''
+    }
+
+    function stopQueue(){
+        newSound.unload();
     }
 </script>
 

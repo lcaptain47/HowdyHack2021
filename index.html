@@ -13,24 +13,37 @@ div {margin-bottom: 100;}
 <div class = "container-fluid">
 	<div class = "row justify-content-md-center">
 
-		<div class = "col col-lg-2" id = "redS" style="font-size:22pt">
+        
+
+		<div class = "col col-lg-1" id = "redS" style="font-size:22pt">
             <button onclick="setInstance('\\assets\\unforgivable.mp3')" class="btn btn-light">Unforgivable</button>
             <button onclick="setInstance('\\assets\\Hi_Honey.mp3')" class="btn btn-light">Hi Honey</button>
             <button onclick="setInstance('\\assets\\Eekum_Bokum_shortened.mp3')" class="btn btn-light">Eekum Bokum</button>
             <button onclick="setInstance('\\assets\\onigiri.mp3')" class="btn btn-light">Onigiri</button>
             <button onclick="setInstance('\\assets\\Ayame_Tis_I.mp3')" class="btn btn-light">Tis I</button>
+            
+        </div>
+
+        
+        <div class = "col col-lg-2">
+            <p id="volume value">0.5</p>
+            <input type="range" min="0" max="1" value="0.5" step="0.1" id="volume">
+
+            <p id="speed value">1</p>
+            <input type="range" min="0.5" max="4" value="1" step="0.5" id="speed">
+        </div>
+
+        <div class = "col col-lg-1" style="font-size:22pt">
+            <button onclick="playSoundKEKW(instance)" class="btn btn-light">Play Sample</button>   
             <button onclick="addToQueue(instance)" class="btn btn-light">Add to Queue</button>
             <button onclick="playQueue()" class="btn btn-light">Play Queue</button>
-            <button onclick="playSoundKEKW(instance)" class="btn btn-light">Play</button>
+            <button onclick="clearQueue()" class="btn btn-light">Clear Queue</button>
+            
+            
         </div>
 
         <div>
-            <p id="volume value">0.5</p>
-            <input type="range" min="0" max="1" value="0.5" step="0.1" id="volume">
-        </div>
-        <div>
-            <p id="speed value">1</p>
-            <input type="range" min="0.5" max="4" value="1" step="0.5" id="speed">
+            
         </div>
 		
 	</div>
@@ -79,12 +92,12 @@ div {margin-bottom: 100;}
    //Displays
     document.getElementById("speed").oninput = function() {
         displaySpeed()
-        instance.speed = document.getElementById("speed").value
+        instance.changeSpeed(document.getElementById("speed").value)
     }
 
     document.getElementById("volume").oninput = function(){
         displayVolume()
-        instance.volume = document.getElementById("volume").value
+        instance.changeVolume(document.getElementById("volume").value)
     }
 
     function displayVolume(){
@@ -104,25 +117,19 @@ div {margin-bottom: 100;}
 
     function playSoundKEKW(thisInstance){
         let sound = new Howl({src: [thisInstance.file], html5: true, volume: [thisInstance.volume], rate: [thisInstance.speed]})
+        console.log('rate ' + thisInstance.speed)
         sound.play();
     }
 
-    function addToQueue(thisInstance){
-        queue.push(thisInstance);
+    function addToQueue(thatInstance){
+        queue.push(thatInstance);
     }
 
     function playing(i, files, volumes, rates) {
-        let sound = new Howl({src: [files[i]], volume: [volumes[i]], rate: [rates[i]]})
+        let sound = new Howl({src: [files[i]], volume: [volumes[i]], rate: [rates[i]], onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
         sound.play();
-        i++;
-        if (i >= queue.length) {
-            
-        }
-        else {
-            sound.onend(playing())
-        }
     }
-    
+
     function playQueue(){
         let files = [];
         let volumes = [];
@@ -131,15 +138,18 @@ div {margin-bottom: 100;}
 
         for(i = 0; i < queue.length; i++){
             files.push(queue[i].file);
-        }
-        for(i = 0; i < queue.length; i++){
             volumes.push(queue[i].volume);
-        }
-        for(i = 0; i < queue.length; i++){
+            console.log("volume " + volumes)
             rates.push(queue[i].speed);
+            console.log("speed " + rates[i])
         }
         i = 0;
-        playing(i, files, volumes, rates);
+        let sound = new Howl({src: [files[i]], html5: true, volume: [volumes[i]], rate: [2]/*[rates[i]]*/, onend: function(){if (i+1 < queue.length) {playing(i+1, files, volumes, rates)}}})
+        sound.play();
+    }
+
+    function clearQueue(){
+        queue = [];
     }
 </script>
 

@@ -109,14 +109,16 @@ div {margin-bottom: 100;}
         let files = [];
         let volumes = [];
         let rates = [];
-        for(let i = 0; step < queue.length; i++){
-            files.push(queue[1].file);
+        let i = 0;
+
+        for(i = 0; step < queue.length; i++){
+            files.push(queue[i].file);
         }
-        for(let i = 0; step < queue.length; i++){
-            volumes.push(queue[1].file);
+        for(i = 0; step < queue.length; i++){
+            volumes.push(queue[i].file);
         }
-        for(let i = 0; step < queue.length; i++){
-            files.push(queue[1].file);
+        for(i = 0; step < queue.length; i++){
+            files.push(queue[i].file);
         }
     }
 </script>

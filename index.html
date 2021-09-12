@@ -15,14 +15,26 @@ div {margin-bottom: 100;}
 <h1 class="text-center">VBoard</h1>
 
 <div class="row justify-content-center">
-    <img src="/assets/ImPomu.png" alt="Pomu" style="width: 25%">
+    <img id='itspomu' src="/assets/ImPomu.png" alt="Pomu" style="width: 25%">
+    <script>
+    const pomu = document.getElementById('itspomu')
+    pomu.addEventListener('click', function() {
+            pomu.src = '/assets/Ascended Pomu.png';
+            let wow = new Howl({src:['/assets/Wow.mp3'], html5:true,volume:[.5], rate:[1]});
+            wow.play();
+    }, false)
+    </script>
 </div>
 
 
 <div class = "container-fluid">
 	<div class = "row justify-content-md-center">
 
-        
+        <div class="col col-lg-1 text-right" style="font-size:22pt">
+            <button onclick="setInstance('\\assets\\Gawr Gura - a.mp3', 'A')" class="btn btn-light">A</button>
+            <button onclick="setInstance('\\assets\\yubi_yubi.mp3', 'Yubi Yubi')" class="btn btn-light">Yubi Yubi</button>
+            <button onclick="setInstance('\\assets\\Wah.mp3', 'Wah')" class="btn btn-light">Wah</button>
+        </div>
 
 		<div class = "col col-lg-1 text-right" id = "redS" style="font-size:22pt">
             <button onclick="setInstance('\\assets\\unforgivable.mp3', 'Unforgivable')" class="btn btn-light">Unforgivable</button>
@@ -30,8 +42,10 @@ div {margin-bottom: 100;}
             <button onclick="setInstance('\\assets\\Eekum_Bokum_shortened.mp3', 'Eekum Bokum')" class="btn btn-light">Eekum Bokum</button>
             <button onclick="setInstance('\\assets\\onigiri.mp3', 'Onigiri')" class="btn btn-light">Onigiri</button>
             <button onclick="setInstance('\\assets\\Ayame_Tis_I.mp3', 'Tis I')" class="btn btn-light">Tis I</button>
-            
+            <button onclick="setInstance('\\assets\\Sneed and Feed.mp3', 'Sneed and Feed')" class="btn btn-light">Sneed and Feed</button>
         </div>
+
+        
 
         
         <div class = "col col-lg-2 text-center">
